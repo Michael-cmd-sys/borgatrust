@@ -1,10 +1,7 @@
-// lib/main.dart
-
 import 'package:flutter/material.dart';
-import 'features/auth/splash_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/auth/onboarding_screen.dart';
-import 'core/constants/app_colors.dart';
-import 'services/initialization_service.dart';
+import 'package:borgatrust/bloc/onboarding_bloc.dart'; // Update path if needed
 
 void main() {
   runApp(MyApp());
@@ -13,51 +10,21 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'BorgaTrust',
-      theme: ThemeData(
-        primaryColor: AppColors.primary,
-        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: AppColors.secondary),
-        scaffoldBackgroundColor: AppColors.background,
-        textTheme: TextTheme(
-          bodyMedium: TextStyle(color: AppColors.text), // Corrected: bodyMedium
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<OnboardingBloc>(
+          create: (context) => OnboardingBloc(),
         ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary, // Corrected: backgroundColor
-          ),
+        // Add other BlocProviders here if needed
+      ],
+      child: MaterialApp(
+        title: 'BorgaTrust',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
+        home: OnboardingScreen(),
       ),
-      home: SplashScreenHandler(),
     );
-  }
-}
-
-class SplashScreenHandler extends StatefulWidget {
-  @override
-  _SplashScreenHandlerState createState() => _SplashScreenHandlerState();
-}
-
-class _SplashScreenHandlerState extends State<SplashScreenHandler> {
-  @override
-  void initState() {
-    super.initState();
-    _initializeApp();
-  }
-
-  Future<void> _initializeApp() async {
-    final InitializationService initializationService = InitializationService();
-    await initializationService.initializeApp();
-
-    // Navigate to the next screen after initialization
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => OnboardingScreen()),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SplashScreen();
   }
 }

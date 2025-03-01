@@ -1,17 +1,18 @@
 // lib/services/initialization_service.dart
 
-import 'package:shared_preferences/shared_preferences.dart'; // Example: For storing user preferences
-
 class InitializationService {
   Future<void> initializeApp() async {
-    // Perform any necessary initialization tasks here
-    await Future.delayed(Duration(seconds: 2)); // Simulate some background loading
+    print("InitializationService: initializeApp started");
 
-    // Example: Load user preferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // ... load and use prefs ...
+    // Dummy data and variables
+    String userName = "John Doe";
+    bool isAuthenticated = true; // Or false, depending on your needs
 
-    // Example: Check authentication status
-    // ... check auth status ...
+    // Simulate a short delay (non-blocking)
+    await Future.delayed(Duration(milliseconds: 500));
+
+    print("InitializationService: User name: $userName");
+    print("InitializationService: Is Authenticated: $isAuthenticated");
+    print("InitializationService: initializeApp completed successfully");
   }
 }
