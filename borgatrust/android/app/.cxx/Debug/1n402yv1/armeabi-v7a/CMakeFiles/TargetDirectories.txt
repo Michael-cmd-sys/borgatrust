@@ -1,0 +1,2 @@
+/Users/kenneth/StudioProjects/borgatrust/borgatrust/android/app/.cxx/Debug/1n402yv1/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/kenneth/StudioProjects/borgatrust/borgatrust/android/app/.cxx/Debug/1n402yv1/armeabi-v7a/CMakeFiles/rebuild_cache.dir

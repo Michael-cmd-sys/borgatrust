@@ -5,18 +5,18 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String text;
 
-  CustomButton({required this.onPressed, required this.text});
+  const CustomButton({super.key, required this.onPressed, required this.text});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
-      child: Text(text),
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primary, // Changed from primary to backgroundColor
-        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-        textStyle: TextStyle(fontSize: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+        textStyle: const TextStyle(fontSize: 18),
       ),
+      child: Text(text),
     );
   }
 }

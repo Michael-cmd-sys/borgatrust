@@ -4,10 +4,12 @@ import '../home/home_screen.dart'; // Import HomeScreen
 import '../profiles/profile_screen.dart'; // Import ProfileScreen
 
 class DiscoverScreen extends StatelessWidget {
+  const DiscoverScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Discover Services')),
+      appBar: AppBar(title: const Text('Discover Services')),
       body: ListView(
         children: <Widget>[
           _buildServiceItem("Construction", Icons.home_work, context),
@@ -28,7 +30,8 @@ class DiscoverScreen extends StatelessWidget {
       },
     );
   }
-  Widget _buildBottomNavigationBar(int currentIndex,BuildContext context){
+
+  Widget _buildBottomNavigationBar(int currentIndex, BuildContext context) {
     return BottomNavigationBar(
       currentIndex: currentIndex,
       items: const <BottomNavigationBarItem>[
@@ -46,11 +49,11 @@ class DiscoverScreen extends StatelessWidget {
         ),
       ],
       onTap: (index) {
-        if(index == 0){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        if (index == 0) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
         }
-        if(index == 2){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
+        if (index == 2) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
         }
       },
     );

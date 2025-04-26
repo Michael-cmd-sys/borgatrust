@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "261202671763",
+    "project_id": "puzzle-scout-cd872",
+    "storage_bucket": "puzzle-scout-cd872.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:261202671763:android:81fdb30a25035b70b7f566",
+        "android_client_info": {
+          "package_name": "com.borgatrust.borgatrust"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFN_YlSqQLfi2SMKbfQ8Bt4PLei6qjq6M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:261202671763:android:18951eef74ad6d95b7f566",
+        "android_client_info": {
+          "package_name": "com.example.puzzle_scout"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFN_YlSqQLfi2SMKbfQ8Bt4PLei6qjq6M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

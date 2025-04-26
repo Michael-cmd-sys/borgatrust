@@ -5,6 +5,8 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_strings.dart';
 
 class SplashScreen extends StatelessWidget {
+  const SplashScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,8 +19,8 @@ class SplashScreen extends StatelessWidget {
               AppStrings.appLogoPath, // Assuming you have a logo path in app_strings
               height: 150, // Adjust the size as needed
             ),
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
               'BorgaTrust', // Your app name
               style: TextStyle(
                 color: Colors.white,
@@ -26,8 +28,8 @@ class SplashScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 20),
-            CircularProgressIndicator(
+            const SizedBox(height: 20),
+            const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
             )
           ],

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/onboarding_bloc.dart';
-import 'login_screen.dart';
 import 'signup_screen.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_strings.dart';
-import '../home/home_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({super.key});
+
   @override
   _OnboardingScreenState createState() => _OnboardingScreenState();
 }
@@ -26,13 +26,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _indicator(bool isActive) {
     return AnimatedContainer(
-      duration: Duration(milliseconds: 150),
-      margin: EdgeInsets.symmetric(horizontal: 8.0),
-      height: 8.0,
-      width: isActive ? 24.0 : 16.0,
+      duration: const Duration(milliseconds: 150),
+      margin: const EdgeInsets.symmetric(horizontal: 4.0),
+      height: 4.0,
+      width: isActive ? 40.0 : 32.0,
       decoration: BoxDecoration(
-        color: isActive ? AppColors.primary : AppColors.secondary,
-        borderRadius: BorderRadius.all(Radius.circular(12)),
+        color: isActive ? Colors.orange : Colors.white.withOpacity(0.3),
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
       ),
     );
   }
@@ -40,174 +40,172 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  onPageChanged: (int page) {
-                    setState(() {
-                      _currentPage = page;
-                    });
-                  },
-                  children: <Widget>[
-                    _buildPage(
-                      AppStrings.onboardingMissionTitle,
-                      AppStrings.onboardingMissionDescription,
-                      AppStrings.onboardingMissionImagePath,
-                    ),
-                    _buildPage(
-                      AppStrings.onboardingAiTitle,
-                      AppStrings.onboardingAiDescription,
-                      AppStrings.onboardingAiImagePath,
-                    ),
-                    _buildPage(
-                      AppStrings.onboardingBlockchainTitle,
-                      AppStrings.onboardingBlockchainDescription,
-                      AppStrings.onboardingBlockchainImagePath,
-                    ),
-                  ],
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: (int page) {
+                setState(() {
+                  _currentPage = page;
+                });
+              },
+              children: <Widget>[
+                _buildPage(
+                  AppStrings.onboardingMissionTitle,
+                  AppStrings.onboardingMissionDescription,
+                  AppStrings.onboardingMissionImagePath,
                 ),
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: _buildPageIndicator(),
-              ),
-              SizedBox(height: 30),
-              // Skip or Continue button based on current page
-              _currentPage < 2 ? 
-                _buildNavigationButtons() : 
-                _buildAuthButtons(context),
-            ],
+                _buildPage(
+                  AppStrings.onboardingAiTitle,
+                  AppStrings.onboardingAiDescription,
+                  AppStrings.onboardingAiImagePath,
+                ),
+                _buildPage(
+                  AppStrings.onboardingBlockchainTitle,
+                  AppStrings.onboardingBlockchainDescription,
+                  AppStrings.onboardingBlockchainImagePath,
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildNavigationButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        TextButton(
-          onPressed: () {
-            // Skip to the last page
-            _pageController.animateToPage(
-              2,
-              duration: Duration(milliseconds: 300),
-              curve: Curves.easeIn,
-            );
-          },
-          child: Text('Skip'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            // Go to next page
-            _pageController.nextPage(
-              duration: Duration(milliseconds: 300),
-              curve: Curves.easeIn,
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-          ),
-          child: Text('Continue'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAuthButtons(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SignupScreen()),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: Text('Sign Up', style: TextStyle(fontSize: 16)),
-          ),
-        ),
-        SizedBox(height: 16),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
-              );
-            },
-            style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              side: BorderSide(color: AppColors.primary),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: Text('Login', style: TextStyle(fontSize: 16)),
-          ),
-        ),
-        SizedBox(height: 16),
-        TextButton(
-          onPressed: () {
-            context.read<OnboardingBloc>().add(OnboardingCompleted());
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
-            );
-          },
-          child: Text('Skip for Now'),
-        ),
-      ],
-    );
-  }
-
   Widget _buildPage(String title, String description, String imagePath) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(imagePath, height: 200),
-          SizedBox(height: 20),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(imagePath),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Stack(
+        children: [
+          // Gradient overlay for better text readability
           Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Text(
-              title, 
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.3),
+                  Colors.black.withOpacity(0.7),
+                ],
+              ),
             ),
           ),
-          SizedBox(height: 16),
+
+          // Skip button at top right
+          Positioned(
+            top: 32,
+            right: 16,
+            child: TextButton(
+              onPressed: () {
+                _pageController.animateToPage(
+                  2,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeIn,
+                );
+              },
+              child: const Text(
+                'Skip',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ),
+
+          // Content
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Text(
-              description,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-              maxLines: 5,
-              overflow: TextOverflow.ellipsis,
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Spacer(flex: 3),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white.withOpacity(0.9),
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 25),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: _buildPageIndicator(),
+                ),
+                const SizedBox(height: 25),
+
+                // Navigation button (Next or Finish)
+                _currentPage < 2
+                    ? SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _pageController.nextPage(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeIn,
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            'Next',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )
+                    : SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            context.read<OnboardingBloc>().add(OnboardingCompleted());
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const SignupScreen()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            'Finish',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                const SizedBox(height: 24),
+              ],
             ),
           ),
         ],

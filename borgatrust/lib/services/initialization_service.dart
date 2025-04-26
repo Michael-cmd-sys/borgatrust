@@ -9,7 +9,7 @@ class InitializationService {
     bool isAuthenticated = true; // Or false, depending on your needs
 
     // Simulate a short delay (non-blocking)
-    await Future.delayed(Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 500));
 
     print("InitializationService: User name: $userName");
     print("InitializationService: Is Authenticated: $isAuthenticated");

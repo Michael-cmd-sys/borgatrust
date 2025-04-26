@@ -1,0 +1,2 @@
+/Users/kenneth/StudioProjects/borgatrust/borgatrust/android/app/.cxx/Debug/1n402yv1/x86/CMakeFiles/edit_cache.dir
+/Users/kenneth/StudioProjects/borgatrust/borgatrust/android/app/.cxx/Debug/1n402yv1/x86/CMakeFiles/rebuild_cache.dir
