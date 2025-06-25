@@ -130,7 +130,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       text: isLastPage ? "Get Started" : "Next",
                       onPressed: () {
                         if (isLastPage) {
-                          completeOnboarding();
+                          completeOnboarding(); // Navigate to AuthScreen
                         } else {
                           controller.nextPage(
                             duration: const Duration(milliseconds: 500),
@@ -139,14 +139,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         }
                       },
                     ),
-                    if (!isLastPage) ...[
-                      const SizedBox(height: 16),
-                      CustomButton(
-                        text: "Sign In",
-                        onPressed: () => completeOnboarding(),
-                        isPrimary: false,
-                      ),
-                    ],
+                    // Removed the conditional "Sign In" button
+                    // The "Skip" button and the final "Get Started" button now handle navigation to AuthScreen.
                   ],
                 ),
               ),

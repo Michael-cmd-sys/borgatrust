@@ -22,11 +22,11 @@ class FeaturedServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 240,
-      margin: const EdgeInsets.all(8),
+      width: 260, // Slightly increased width for better content fit
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8), // Consistent margin
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16), // Consistent border radius
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -58,93 +58,68 @@ class FeaturedServiceCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Provider Name
                 Text(
                   provider,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                
-                const SizedBox(height: 4),
-                
-                // Service Title
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
-                  ),
-                  maxLines: 2,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                
+                const SizedBox(height: 4),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textDark,
+                      ),
+                  maxLines: 2, // Keep title to 2 lines
+                  overflow: TextOverflow.ellipsis,
+                ),
                 const SizedBox(height: 8),
-                
-                // Rating
                 Row(
                   children: [
-                    const Icon(
-                      Icons.star,
-                      color: Color(0xFFFFB800),
-                      size: 16,
+                    const Icon(Icons.star, color: Color(0xFFFFB800), size: 18), // Slightly larger star
+                    const SizedBox(width: 4),
+                    Text(
+                      rating.toStringAsFixed(1), // Format rating to 1 decimal place
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      rating.toString(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      "($reviews)",
-                      style: TextStyle(
-                        color: AppColors.textLight,
-                        fontSize: 12,
-                      ),
+                      "($reviews reviews)", // More descriptive
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppColors.textMedium,
+                          ),
                     ),
                   ],
                 ),
-                
-                const SizedBox(height: 8),
-                
-                // Price
+                const Spacer(), // Use Spacer to push price to the bottom
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center, // Align items vertically
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLight.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        "From \$${price.toString()}",
-                        style: const TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                        ),
-                      ),
+                    Text(
+                      "GH₵ $price", // Assuming price is an int, format as needed
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     IconButton(
-                      icon: const Icon(
-                        Icons.favorite_border,
+                      icon: Icon(
+                        // TODO: Add logic to show favorite_filled if service is favorited
+                        Icons.favorite_outline,
                         color: AppColors.textLight,
-                        size: 20,
+                        size: 24, // Slightly larger icon
                       ),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       onPressed: () {
-                        // Add to favorites
+                        // TODO: Implement add/remove to favorites
                       },
                     ),
                   ],

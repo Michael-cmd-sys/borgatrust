@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../utils/app_theme.dart';
 import '../../widgets/african_pattern_container.dart';
 import '../../widgets/custom_button.dart';
+import '../../services/user_service.dart'; // Import UserService
+import '../../widgets/custom_text_field.dart'; // Import CustomTextField for editable fields
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -14,19 +16,18 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isEditing = false;
-  
-  // User profile data
-  final Map<String, dynamic> _userData = {
-    "name": "John Doe",
-    "email": "johndoe@example.com",
-    "phone": "+233 20 123 4567",
-    "location": "Accra, Ghana",
-    "bio": "Professional looking for quality services in web development and design.",
-    "memberSince": "August 2023",
-    "avatar": "assets/images/user_profile.jpg",
-  };
+  final UserService _userService = UserService();
+  late Map<String, dynamic> _userData; // To be fetched from UserService
 
-  // Sample job history data
+  // Controllers for editable fields
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _businessNameController = TextEditingController();
+
+
+  // Sample job history data (Client-specific)
   final List<Map<String, dynamic>> _jobHistory = [
     {
       "title": "Website Redesign",
@@ -87,26 +88,206 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _loadUserData();
+    // Initialize TabController after knowing the number of tabs based on role
+    // This will be handled in _loadUserData or build method
   }
+
+  void _loadUserData() {
+    _userData = _userService.getMockUserData();
+    _nameController.text = _userData['name'] ?? '';
+    _bioController.text = _userData['bio'] ?? '';
+    _locationController.text = _userData['location'] ?? '';
+    _phoneController.text = _userData['phone'] ?? '';
+    if (_userService.currentUserRole == UserRole.serviceAgent) {
+      _businessNameController.text = _userData['businessName'] ?? '';
+    }
+
+    // Initialize TabController based on role
+    // _setupTabs(); // TabController no longer needed
+  }
+
+  // void _setupTabs() { // No longer needed
+  //   UserRole role = _userService.currentUserRole;
+  //   int tabCount = role == UserRole.serviceAgent ? 3 : 3;
+  //   _tabController?.dispose();
+  //   _tabController = TabController(length: tabCount, vsync: this);
+  //   _tabController.addListener(() {
+  //     if (_tabController.indexIsChanging) {
+  //     }
+  //   });
+  // }
+
 
   @override
   void dispose() {
-    _tabController.dispose();
+    // _tabController.dispose(); // No longer needed
+    _nameController.dispose();
+    _bioController.dispose();
+    _locationController.dispose();
+    _phoneController.dispose();
+    _businessNameController.dispose();
     super.dispose();
   }
 
+  void _toggleEditMode() {
+    setState(() {
+      _isEditing = !_isEditing;
+      if (_isEditing) {
+        // Populate controllers when entering edit mode
+        _nameController.text = _userData['name'] ?? '';
+        _bioController.text = _userData['bio'] ?? '';
+        _locationController.text = _userData['location'] ?? '';
+        _phoneController.text = _userData['phone'] ?? '';
+         if (_userService.currentUserRole == UserRole.serviceAgent) {
+            _businessNameController.text = _userData['businessName'] ?? '';
+        }
+      }
+    });
+  }
+
+  void _saveChanges() {
+     // Basic validation example
+    if (_nameController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Name cannot be empty."), backgroundColor: AppColors.error),
+      );
+      return;
+    }
+
+    setState(() {
+      _isEditing = false;
+      // NOTE: In a real app, this data would be saved to a backend.
+      // Here, we're just updating the local _userData map for mock purposes.
+      // This local _userData will be re-fetched via _userService.getMockUserData()
+      // if the screen rebuilds or role changes, so direct mutation here is for immediate UI update only.
+      _userData['name'] = _nameController.text;
+      _userData['bio'] = _bioController.text;
+      _userData['location'] = _locationController.text;
+      _userData['phone'] = _phoneController.text;
+      if (_userService.currentUserRole == UserRole.serviceAgent) {
+         _userData['businessName'] = _businessNameController.text;
+         // Potentially update the UserService's mock data if it were designed to be mutable,
+         // or rely on re-fetching for a "clean" state if roles are toggled.
+      }
+       print("Saving changes: $_userData"); // For debugging
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Profile updated successfully! (Mock)"),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  // Service Agent Tabs - Placeholders for now
+  Widget _buildMyServicesTab() {
+    // TODO: Fetch and display services offered by the agent
+    return _buildEmptyState(
+      "My Offered Services",
+      "You haven't listed any services yet. Add your first service!",
+      Icons.list_alt_outlined,
+      showBrowseButton: false, // Agent should add services, not browse
+      actionButton: CustomButton(
+        text: "Add New Service",
+        onPressed: () {
+          // TODO: Trigger action to add a new service (e.g., show bottom sheet or navigate)
+          // This could potentially re-use or adapt the PostServiceBottomSheet
+           ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Action: Add new service (Not implemented yet)")),
+          );
+        },
+        isPrimary: true,
+        isFullWidth: false,
+      ),
+    );
+  }
+
+  Widget _buildServiceRequestsTab() {
+    // TODO: Fetch and display service requests from clients
+    return _buildEmptyState(
+      "Client Service Requests",
+      "No pending service requests from clients at the moment.",
+      Icons.mark_email_read_outlined, // Or Icons.inbox_outlined
+      showBrowseButton: false,
+    );
+  }
+
+  Widget _buildAgentPerformanceTab() {
+    // TODO: Display agent's ratings, earnings, statistics
+    return _buildEmptyState(
+      "My Performance",
+      "Your performance metrics (ratings, earnings, etc.) will appear here.",
+      Icons.insights_outlined, // Or Icons.bar_chart_outlined
+      showBrowseButton: false,
+    );
+  }
+
+
+  Widget _buildEmptyState(String title, String message, IconData icon, {bool showBrowseButton = true, Widget? actionButton}) {
+    return Center(
+      child: Padding( // Added padding around the empty state content
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 80,
+              color: AppColors.textLight.withOpacity(0.5),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.textMedium),
+            ),
+            const SizedBox(height: 24),
+            if (actionButton != null)
+              actionButton
+            else if (showBrowseButton)
+              CustomButton(
+                text: "Browse Services", // This button is more for clients
+                onPressed: () {
+                  // TODO: Navigate to services/explore screen
+                  // Example: Provider.of<AppNavigationProvider>(context, listen: false).navigateTo(AppTab.explore);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Action: Browse services (Not implemented yet)")),
+                  );
+                },
+                isPrimary: true,
+                isFullWidth: false,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    // Ensure user data is loaded (e.g. if role changed elsewhere and screen rebuilds)
+    // However, relying on initState and specific triggers for _loadUserData is safer.
+    // For this iteration, we assume initState sets it up.
+    // If _userService.currentUserRole can change and this screen is still active,
+    // a mechanism to call _loadUserData and rebuild would be needed (e.g., via Provider/Riverpod).
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: AppColors.background,
         centerTitle: true,
-        title: const Text(
-          "My Profile",
-          style: TextStyle(
+        title: Text(
+          _userService.currentUserRole == UserRole.serviceAgent ? "Service Agent Profile" : "My Profile",
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
             color: AppColors.textDark,
@@ -114,73 +295,106 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         ),
         actions: [
           IconButton(
-            icon: Icon(_isEditing ? Icons.close : Icons.edit),
+            icon: Icon(_isEditing ? Icons.done : Icons.edit, color: AppColors.primary),
             onPressed: () {
-              setState(() {
-                _isEditing = !_isEditing;
-              });
+              if (_isEditing) {
+                _saveChanges();
+              } else {
+                _toggleEditMode();
+              }
             },
           ),
+          if (_isEditing) // Show close button only in edit mode
+            IconButton(
+              icon: const Icon(Icons.close, color: AppColors.textMedium),
+              onPressed: () {
+                setState(() {
+                  _isEditing = false;
+                  // Optionally revert changes by reloading from _userService or initial _userData
+                  _loadUserData(); // Revert changes by reloading
+                });
+              },
+            )
         ],
       ),
-      body: AfricanPatternContainer(
-        opacity: 0.02,
-        child: Column(
-          children: [
-            _buildProfileHeader(),
-            _buildProfileStats(),
-            _buildTabBar(),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildActiveJobsTab(),
-                  _buildJobHistoryTab(),
-                  _buildSavedServicesTab(),
-                ],
+      body: RefreshIndicator( // Added RefreshIndicator for potential future use
+        onRefresh: () async {
+          setState(() {
+            _loadUserData(); // Simulate fetching fresh data
+          });
+        },
+        child: LayoutBuilder( // Use LayoutBuilder for responsiveness
+          builder: (context, constraints) {
+            return SingleChildScrollView( // Ensure content is scrollable
+              child: ConstrainedBox( // Ensure SingleChildScrollView takes at least screen height
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight( // Ensure Column takes only necessary height
+                  child: AfricanPatternContainer(
+                    opacity: 0.02,
+                    child: Column(
+                      children: [
+                        _buildProfileHeader(context),
+                        _buildProfileStats(context),
+                        const SizedBox(height: 16), // Spacing before the list
+                        _buildProfileMenuList(context), // New list-based navigation
+                        // const SizedBox(height: 16), // Spacing after the list
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ],
+            );
+          }
         ),
       ),
     );
   }
 
-  Widget _buildProfileHeader() {
-    return Container(
-      padding: const EdgeInsets.all(16),
+  Widget _buildProfileHeader(BuildContext context) {
+    bool isAgent = _userService.currentUserRole == UserRole.serviceAgent;
+    // Use a placeholder if avatar URL is null or empty
+    String avatarUrl = _userData['avatarUrl'] ?? 'assets/images/placeholder_avatar.png';
+    if (avatarUrl.isEmpty) avatarUrl = 'assets/images/placeholder_avatar.png';
+
+
+    return Padding( // Changed Container to Padding for better spacing control
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
           Stack(
+            alignment: Alignment.center,
             children: [
               CircleAvatar(
                 radius: 60,
-                backgroundColor: AppColors.primaryLight,
-                backgroundImage: AssetImage(_userData["avatar"]),
-                onBackgroundImageError: (exception, stackTrace) {},
-                child: const ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(60)),
-                  child: Icon(
-                    Icons.person,
-                    size: 60,
-                    color: AppColors.primary,
-                  ),
-                ),
+                backgroundColor: AppColors.primaryLight.withOpacity(0.5),
+                // backgroundImage: AssetImage(_userData["avatarUrl"]), // Use avatarUrl
+                // Use NetworkImage if URL is from network, otherwise AssetImage
+                // For mock data, ensure placeholder assets exist or handle errors.
+                backgroundImage: _userData["avatarUrl"] != null && _userData["avatarUrl"].isNotEmpty
+                               ? AssetImage(_userData["avatarUrl"])
+                               : null, // Fallback to child icon if no image
+                onBackgroundImageError: (exception, stackTrace) {
+                  print("Error loading avatar: $exception");
+                },
+                child: (_userData["avatarUrl"] == null || _userData["avatarUrl"].isEmpty)
+                    ? const Icon(Icons.person, size: 60, color: AppColors.primary)
+                    : null,
               ),
               if (_isEditing)
                 Positioned(
-                  right: 0,
+                  right: MediaQuery.of(context).size.width / 2 - 70, // Adjust positioning
                   bottom: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.camera_alt,
-                      color: Colors.white,
-                      size: 20,
+                  child: Material( // Added Material for InkWell ripple effect
+                    color: AppColors.primary,
+                    shape: const CircleBorder(),
+                    elevation: 2.0,
+                    child: InkWell(
+                      onTap: () { /* TODO: Implement image picker */ },
+                      customBorder: const CircleBorder(),
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                      ),
                     ),
                   ),
                 ),
@@ -188,127 +402,110 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           ),
           const SizedBox(height: 16),
           _isEditing
-              ? _buildEditableField(_userData["name"], "Name", TextInputType.name)
+              ? CustomTextField(label: "Name", controller: _nameController, validator: (val) => val!.isEmpty ? "Name required" : null)
               : Text(
-                  _userData["name"],
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
-                  ),
+                  _userData["name"] ?? "N/A",
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
                 ),
+          if (isAgent && (_isEditing || (_userData['businessName'] != null && _userData['businessName'].isNotEmpty)))
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0),
+              child: _isEditing
+                  ? CustomTextField(label: "Business Name", controller: _businessNameController)
+                  : Text(
+                      _userData["businessName"] ?? "",
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppColors.primary),
+                      textAlign: TextAlign.center,
+                    ),
+            ),
           const SizedBox(height: 8),
           _isEditing
-              ? _buildEditableField(_userData["bio"], "Bio", TextInputType.multiline, maxLines: 3)
+              ? CustomTextField(label: "Bio", controller: _bioController, maxLines: 3)
               : Text(
-                  _userData["bio"],
+                  _userData["bio"] ?? "No bio available.",
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textMedium,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.textMedium),
                 ),
           const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          // Contact and Location Row (more responsive)
+          Wrap( // Use Wrap for better responsiveness of info items
+            spacing: 16.0, // Horizontal space between items
+            runSpacing: 8.0, // Vertical space between lines
+            alignment: WrapAlignment.center,
             children: [
-              Icon(
-                Icons.location_on,
-                size: 16,
-                color: AppColors.textLight,
-              ),
-              const SizedBox(width: 4),
-              _isEditing
-                  ? SizedBox(
-                      width: 150,
-                      child: TextField(
-                        controller: TextEditingController(text: _userData["location"]),
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          isDense: true,
-                          border: OutlineInputBorder(),
-                        ),
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                    )
-                  : Text(
-                      _userData["location"],
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textMedium,
-                      ),
-                    ),
-              const SizedBox(width: 16),
-              Icon(
-                Icons.calendar_today,
-                size: 16,
-                color: AppColors.textLight,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                "Member since ${_userData["memberSince"]}",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textMedium,
+              if (_isEditing || (_userData["phone"] != null && _userData["phone"].isNotEmpty))
+                _buildInfoChip(
+                  icon: Icons.phone_outlined,
+                  text: _isEditing ? null : _userData["phone"] ?? "N/A",
+                  controller: _isEditing ? _phoneController : null,
+                  label: "Phone",
+                  keyboardType: TextInputType.phone
                 ),
-              ),
+              if (_isEditing || (_userData["location"] != null && _userData["location"].isNotEmpty))
+                _buildInfoChip(
+                  icon: Icons.location_on_outlined,
+                  text: _isEditing ? null : _userData["location"] ?? "N/A",
+                  controller: _isEditing ? _locationController : null,
+                  label: "Location"
+                ),
+              if (!_isEditing && (_userData["memberSince"] != null && _userData["memberSince"].isNotEmpty))
+                _buildInfoChip(
+                  icon: Icons.calendar_today_outlined,
+                  text: "Joined ${_userData["memberSince"]}",
+                ),
+               if (isAgent && (_userData['verified'] == true) && !_isEditing)
+                 _buildInfoChip(
+                    icon: Icons.verified_outlined,
+                    text: "Verified Agent",
+                    iconColor: Colors.green,
+                  )
             ],
           ),
-          if (_isEditing)
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: CustomButton(
-                text: "Save Changes",
-                onPressed: () {
-                  setState(() {
-                    _isEditing = false;
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Profile updated successfully!"),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                },
-                isPrimary: true,
-                isFullWidth: false,
-                height: 40,
-              ),
-            ),
+          // Removed the Save Changes button from here, it's now in AppBar actions
         ],
       ),
     );
   }
 
-  Widget _buildEditableField(
-    String initialValue,
-    String hint,
-    TextInputType keyboardType, {
-    int maxLines = 1,
+  Widget _buildInfoChip({
+    required IconData icon,
+    String? text,
+    TextEditingController? controller,
+    String? label,
+    TextInputType? keyboardType,
+    Color? iconColor,
   }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      width: maxLines > 1 ? double.infinity : null,
-      child: TextField(
-        controller: TextEditingController(text: initialValue),
-        keyboardType: keyboardType,
-        maxLines: maxLines,
-        decoration: InputDecoration(
-          hintText: hint,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+    if (_isEditing && controller != null) {
+      return SizedBox(
+        width: 180, // Give some width to editable fields
+        child: CustomTextField(
+          label: label ?? "",
+          controller: controller,
+          keyboardType: keyboardType ?? TextInputType.text,
+          prefixIcon: Icon(icon, color: iconColor ?? AppColors.textLight, size: 18),
+          isDense: true, // Smaller text field
+        ),
+      );
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min, // Important for Wrap
+      children: [
+        Icon(icon, size: 16, color: iconColor ?? AppColors.textLight),
+        const SizedBox(width: 6),
+        Flexible( // Allow text to wrap if it's too long
+          child: Text(
+            text ?? "",
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.textMedium),
+            overflow: TextOverflow.ellipsis, // Add ellipsis for very long text
           ),
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildProfileStats() {
+
+  Widget _buildProfileStats(BuildContext context) { // Added context
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
@@ -355,25 +552,112 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildTabBar() {
-    return Container(
-      color: Colors.white,
-      child: TabBar(
-        controller: _tabController,
-        labelColor: AppColors.primary,
-        unselectedLabelColor: AppColors.textMedium,
-        indicatorColor: AppColors.primary,
-        indicatorWeight: 3,
-        tabs: const [
-          Tab(text: "Active Jobs"),
-          Tab(text: "History"),
-          Tab(text: "Saved"),
-        ],
+ Widget _buildProfileMenuList(BuildContext context) {
+    UserRole role = _userService.currentUserRole;
+    List<Widget> menuItems = [];
+
+    if (role == UserRole.client) {
+      menuItems.addAll([
+        _buildMenuListItem(context, title: "My Active Orders", icon: Icons.shopping_cart_outlined, onTap: () {
+          // TODO: Navigate to Active Orders Screen (previously _buildActiveOrdersTab content)
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to My Active Orders")));
+        }),
+        _buildMenuListItem(context, title: "Order History", icon: Icons.history_edu_outlined, onTap: () {
+          // TODO: Navigate to Order History Screen
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to Order History")));
+        }),
+        _buildMenuListItem(context, title: "Saved Items", icon: Icons.bookmark_add_outlined, onTap: () {
+          // TODO: Navigate to Saved Items Screen
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to Saved Items")));
+        }),
+      ]);
+    } else if (role == UserRole.serviceAgent) {
+      menuItems.addAll([
+        _buildMenuListItem(context, title: "My Offered Services", icon: Icons.list_alt_outlined, onTap: () {
+           // TODO: Navigate to My Services Screen
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to My Services")));
+        }),
+        _buildMenuListItem(context, title: "Client Service Requests", icon: Icons.mark_email_read_outlined, onTap: () {
+           // TODO: Navigate to Service Requests Screen
+           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to Service Requests")));
+        }),
+        _buildMenuListItem(context, title: "My Performance", icon: Icons.insights_outlined, onTap: () {
+           // TODO: Navigate to Performance Screen
+           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to Performance")));
+        }),
+      ]);
+    }
+
+    // Common menu items
+    menuItems.addAll([
+      const Divider(height: 24, indent: 16, endIndent: 16),
+      _buildMenuListItem(context, title: "Account Settings", icon: Icons.settings_outlined, onTap: () {
+         // TODO: Navigate to Account Settings
+         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to Account Settings")));
+      }),
+      _buildMenuListItem(context, title: "Help & Support", icon: Icons.help_outline, onTap: () {
+         // TODO: Navigate to Help & Support
+         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to Help & Support")));
+      }),
+      _buildMenuListItem(context, title: "Logout", icon: Icons.logout, onTap: () {
+        // TODO: Implement Logout
+        UserService().logout(); // Simulate logout
+        Navigator.of(context).pushNamedAndRemoveUntil('/auth', (route) => false); // Navigate to auth screen
+      },
+      textColor: AppColors.error, // Optional: highlight logout
+      iconColor: AppColors.error,
+      ),
+    ]);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0), // Add some horizontal padding to the list itself
+      child: Column(children: menuItems),
+    );
+  }
+
+  Widget _buildMenuListItem(BuildContext context, {required String title, required IconData icon, VoidCallback? onTap, Color? textColor, Color? iconColor}) {
+    return Card( // Wrap ListTile in a Card for better visual separation and styling
+      elevation: 1.5, // Subtle elevation
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: Icon(icon, color: iconColor ?? AppColors.primary, size: 24),
+        title: Text(
+          title,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: textColor ?? AppColors.textDark,
+                fontWeight: FontWeight.w500 // Slightly less bold than section titles
+              ),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textLight),
+        onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Adjust padding
       ),
     );
   }
 
-  Widget _buildActiveJobsTab() {
+
+  // These methods will be removed or their content moved to new screen widgets.
+  // For now, they are kept to avoid breaking references until new screens are created.
+  // Client Tabs
+  Widget _buildActiveOrdersTab() { // Renamed from _buildActiveJobsTab
+    return _activeJobs.isEmpty // Assuming _activeJobs still holds client's active orders
+        ? _buildEmptyState(
+            "No Active Orders",
+            "You don't have any active orders at the moment.",
+            Icons.shopping_cart_outlined,
+          )
+        : ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: _activeJobs.length,
+            itemBuilder: (context, index) {
+              final job = _activeJobs[index];
+              return _buildActiveJobCard(job); // Can reuse card if structure is similar
+            },
+          );
+  }
+
+  Widget _buildJobHistoryTab() {
     return _activeJobs.isEmpty
         ? _buildEmptyState(
             "No active jobs",
@@ -510,24 +794,24 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildJobHistoryTab() {
+  Widget _buildJobHistoryTab() { // This is for Client "Order History"
     return _jobHistory.isEmpty
         ? _buildEmptyState(
-            "No job history",
-            "You haven't completed any jobs yet.",
-            Icons.history,
+            "No Order History",
+            "You haven't completed any orders yet.",
+            Icons.history_edu_outlined,
           )
         : ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: _jobHistory.length,
             itemBuilder: (context, index) {
               final job = _jobHistory[index];
-              return _buildJobHistoryCard(job);
+              return _buildJobHistoryCard(job); // Can reuse card if structure is similar
             },
           );
   }
 
-  Widget _buildJobHistoryCard(Map<String, dynamic> job) {
+  Widget _buildJobHistoryCard(Map<String, dynamic> job) { // This card is for client's past orders
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,
@@ -666,11 +950,11 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   }
 
   Widget _buildSavedServicesTab() {
-    return _savedServices.isEmpty
+    return _savedServices.isEmpty // This is for Client "Saved Items"
         ? _buildEmptyState(
-            "No saved services",
-            "You haven't saved any services yet.",
-            Icons.bookmark_border,
+            "No Saved Items",
+            "You haven't saved any items yet.",
+            Icons.bookmark_add_outlined,
           )
         : GridView.builder(
             padding: const EdgeInsets.all(16),

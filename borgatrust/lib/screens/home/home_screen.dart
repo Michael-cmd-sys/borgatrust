@@ -282,55 +282,64 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildHeroSection() {
     return Container(
       margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24), // Adjusted padding
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            AppColors.primary,
-            AppColors.primaryDark,
-          ],
+          colors: [AppColors.primary, AppColors.primaryDark],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+            color: AppColors.primary.withOpacity(0.3), // Use theme color for shadow
+            blurRadius: 12,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Connect with Trusted\nGhanaian Experts",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              height: 1.3,
-            ),
+          Text(
+            "Discover Top-Tier\nGhanaian Talent & Services", // More engaging title
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  height: 1.3,
+                ),
           ),
           const SizedBox(height: 12),
           Text(
-            "Find skilled professionals for all your service needs",
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
-              fontSize: 14,
-            ),
+            "Your gateway to verified professionals and unique services from Ghana, worldwide.", // More specific subtitle
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.white.withOpacity(0.9),
+                ),
           ),
           const SizedBox(height: 24),
           CustomButton(
-            text: "Explore Services",
+            text: "Browse All Services", // Clearer CTA
             onPressed: () {
-              // Navigate to services exploration
+              // TODO: Navigate to services exploration (e.g., ExploreScreen or specific categories)
             },
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-            isPrimary: false,
+            // Using style from OutlinedButton for contrast on gradient
+            backgroundColor: Colors.white.withOpacity(0.95),
+            foregroundColor: AppColors.primaryDark,
+            isPrimary: false, // This will now use the outlined style from CustomButton if not careful
+                               // We might need a new variant or direct styling for this button.
+                               // For now, let's assume CustomButton's isPrimary=false is an outlined button.
+                               // Or better, add specific styling here if CustomButton doesn't support this look.
+
+            buttonStyle: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: AppColors.primaryDark,
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 28),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              elevation: 2, // Adding subtle elevation for depth on the button
+            ),
+            isPrimary: true, // Important: Set to true to use ElevatedButton as base, style is overridden by buttonStyle
             isFullWidth: false,
-            height: 45,
           ),
         ],
       ),

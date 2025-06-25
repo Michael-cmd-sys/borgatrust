@@ -73,118 +73,82 @@ class TopServiceProviderCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         name,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textDark,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textDark,
+                            ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    
-                    // Add some spacing
-                    const SizedBox(width: 4),
-                    
-                    // Rating
+                    const SizedBox(width: 8), // Increased spacing
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
-                          Icons.star,
-                          color: Color(0xFFFFB800),
-                          size: 16,
-                        ),
-                        const SizedBox(width: 2),
+                        const Icon(Icons.star, color: Color(0xFFFFB800), size: 18), // Slightly larger
+                        const SizedBox(width: 3),
                         Text(
-                          rating.toString(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
+                          rating.toStringAsFixed(1), // Formatted rating
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                       ],
                     ),
                   ],
                 ),
-                
-                const SizedBox(height: 6),
-                
-                // Specialty
+                const SizedBox(height: 4), // Reduced spacing
                 Text(
                   specialty,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textMedium,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textMedium,
+                      ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                
-                const SizedBox(height: 10),
-                
-                // Projects Completed & View Profile Button - Fix this row's layout
+                const SizedBox(height: 8), // Adjusted spacing
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Projects Completed - Make this shrink properly
-                    Flexible(
+                    Expanded( // Allow projects count to take available space but also shrink
+                      flex: 2, // Give it more tendency to expand
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
-                            Icons.assignment_turned_in,
-                            size: 16,
-                            color: AppColors.primary,
-                          ),
+                          const Icon(Icons.cases_outlined, size: 16, color: AppColors.primary), // Changed icon
                           const SizedBox(width: 4),
                           Text(
-                            "$projectsCompleted",
-                            style: const TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(width: 2),
-                          const Flexible(
-                            child: Text(
-                              "Projects",
-                              style: TextStyle(
-                                color: AppColors.textLight,
-                                fontSize: 14,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            "$projectsCompleted Projects", // Combined text
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: AppColors.textMedium,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
                     ),
-                    
                     const SizedBox(width: 8),
-                    
-                    // View Profile Button - Make it shrink appropriately
-                    TextButton(
+                    ElevatedButton( // Changed to ElevatedButton for more prominence
                       onPressed: () {
-                        // Navigate to provider profile
+                        // TODO: Navigate to provider profile
                       },
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        minimumSize: const Size(20, 30),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        backgroundColor: AppColors.primaryLight.withOpacity(0.2),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryLight.withOpacity(0.25),
+                        foregroundColor: AppColors.primary,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), // Adjusted padding
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      child: const Text(
+                      child: Text(
                         "View Profile",
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith( // Use labelMedium for button text
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                     ),
                   ],

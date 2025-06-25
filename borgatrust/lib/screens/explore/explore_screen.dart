@@ -236,134 +236,123 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   Widget _buildServiceCard(Map<String, dynamic> service) {
-    return Container(
+    return Card( // Using Card widget for standard elevation and shape
       margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Service Image
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.asset(
-              service["image"] as String,
-              height: 150,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 150,
-                  width: double.infinity,
-                  color: AppColors.primaryLight.withOpacity(0.3),
-                  child: Center(
-                    child: Icon(
-                      _getCategoryIcon(service["category"] as String),
-                      color: AppColors.primary,
-                      size: 50,
+      elevation: 3, // Subtle elevation
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), // Consistent rounding
+      child: InkWell( // Make the whole card tappable
+        onTap: () {
+          // TODO: Navigate to service details screen
+          print("Tapped on service: ${service['title']}");
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              child: Image.asset(
+                service["image"] as String,
+                height: 160, // Slightly taller image
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 160,
+                    width: double.infinity,
+                    color: AppColors.primaryLight.withOpacity(0.2),
+                    child: Center(
+                      child: Icon(
+                        _getCategoryIcon(service["category"] as String),
+                        color: AppColors.primary.withOpacity(0.7),
+                        size: 60,
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-          
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Service Title
-                Text(
-                  service["title"] as String,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
+            Padding(
+              padding: const EdgeInsets.all(12), // Reduced padding slightly for compactness
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    service["title"] as String,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textDark,
+                        ),
+                    maxLines: 2, // Ensure title doesn't overflow excessively
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                
-                const SizedBox(height: 8),
-                
-                // Provider Name
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.person,
-                      size: 16,
-                      color: AppColors.textMedium,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      service["provider"] as String,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textMedium,
+                  const SizedBox(height: 6),
+                  Row( // Provider info with icon
+                    children: [
+                      Icon(Icons.storefront_outlined, size: 16, color: AppColors.textMedium),
+                      const SizedBox(width: 6),
+                      Expanded( // Allow provider name to take space and ellipsis if needed
+                        child: Text(
+                          service["provider"] as String,
+                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: AppColors.textMedium,
+                              ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 8),
-                
-                // Rating & Reviews
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.star,
-                      size: 16,
-                      color: Color(0xFFFFB800),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      "${service["rating"]} (${service["reviews"]} reviews)",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textMedium,
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row( // Rating
+                        children: [
+                          const Icon(Icons.star, size: 18, color: Color(0xFFFFB800)),
+                          const SizedBox(width: 4),
+                          Text(
+                            "${(service["rating"] as double).toStringAsFixed(1)}", // Formatted rating
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          const SizedBox(width: 4),
+                           Text(
+                            "(${service["reviews"]} reviews)",
+                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: AppColors.textLight,
+                              ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 12),
-                
-                // Price & View Details Button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "GH₵ ${service["price"]}",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                      Text( // Price
+                        "GH₵ ${service["price"]}",
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
+                            ),
                       ),
-                    ),
-                    CustomButton(
-                      text: "View Details",
-                      onPressed: () {
-                        // Navigate to service details
-                      },
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      isPrimary: true,
-                      isFullWidth: false,
-                      height: 36,
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  CustomButton( // "View Details" button made less prominent, card itself is tappable
+                    text: "View Details",
+                    onPressed: () {
+                       // TODO: Navigate to service details screen
+                       print("Tapped View Details for: ${service['title']}");
+                    },
+                    isPrimary: false, // Use outlined style
+                    isFullWidth: true, // Make it full width for this card layout
+                    height: 38,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
