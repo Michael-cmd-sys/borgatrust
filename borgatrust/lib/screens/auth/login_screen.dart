@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../utils/app_theme.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
+import '../../services/user_service.dart'; // Import the UserService
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -27,7 +28,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _login() {
     if (_formKey.currentState?.validate() ?? false) {
-      // In a real app, implement proper authentication
+      // Simulate authentication and role determination
+      final email = _emailController.text.toLowerCase();
+      final userService = UserService();
+
+      if (email.contains("agent")) {
+        userService.setUserRole(UserRole.serviceAgent);
+      } else {
+        userService.setUserRole(UserRole.client);
+      }
+
+      // In a real app, proper authentication would occur here.
+      // For now, directly navigate to main screen.
       Navigator.of(context).pushNamedAndRemoveUntil(
         '/main',
         (Route<dynamic> route) => false,
