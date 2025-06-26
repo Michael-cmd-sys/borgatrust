@@ -88,49 +88,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _loadUserData();
-    // Initialize TabController after knowing the number of tabs based on role
-    // This will be handled in _loadUserData or build method
+    _tabController = TabController(length: 3, vsync: this);
   }
-
-  void _loadUserData() {
-    _userData = _userService.getMockUserData();
-    _nameController.text = _userData['name'] ?? '';
-    _bioController.text = _userData['bio'] ?? '';
-    _locationController.text = _userData['location'] ?? '';
-    _phoneController.text = _userData['phone'] ?? '';
-    if (_userService.currentUserRole == UserRole.serviceAgent) {
-      _businessNameController.text = _userData['businessName'] ?? '';
-    }
-
-    // Initialize TabController based on role
-    _setupTabs();
-  }
-
-  void _setupTabs() {
-    UserRole role = _userService.currentUserRole;
-    int tabCount = role == UserRole.serviceAgent ? 3 : 3; // Example: Agent gets 3, Client gets 3
-
-    // Dispose previous controller if it exists, before creating a new one.
-    // This is important if _loadUserData (and thus _setupTabs) can be called multiple times.
-    _tabController?.dispose();
-    _tabController = TabController(length: tabCount, vsync: this);
-    _tabController.addListener(() { // Optional: if you need to react to tab changes
-      if (_tabController.indexIsChanging) {
-        // print("Switched to tab: ${_tabController.index}");
-      }
-    });
-  }
-
 
   @override
   void dispose() {
     _tabController.dispose();
-    _nameController.dispose();
-    _bioController.dispose();
-    _locationController.dispose();
-    _phoneController.dispose();
-    _businessNameController.dispose();
     super.dispose();
   }
 
@@ -321,38 +284,24 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             )
         ],
       ),
-      body: RefreshIndicator( // Added RefreshIndicator for potential future use
-        onRefresh: () async {
-          setState(() {
-            _loadUserData(); // Simulate fetching fresh data
-          });
-        },
-        child: LayoutBuilder( // Use LayoutBuilder for responsiveness
-          builder: (context, constraints) {
-            return SingleChildScrollView( // Ensure content is scrollable
-              child: ConstrainedBox( // Ensure SingleChildScrollView takes at least screen height
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight( // Ensure Column takes only necessary height
-                  child: AfricanPatternContainer(
-                    opacity: 0.02,
-                    child: Column(
-                      children: [
-                        _buildProfileHeader(context),
-                        _buildProfileStats(context),
-                        _buildTabBar(context),
-                        Expanded(
-                          child: TabBarView(
-                            controller: _tabController,
-                            children: _buildTabBarViews(), // Dynamically build tab views
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+      body: AfricanPatternContainer(
+        opacity: 0.02,
+        child: Column(
+          children: [
+            _buildProfileHeader(),
+            _buildProfileStats(),
+            _buildTabBar(),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildActiveJobsTab(),
+                  _buildJobHistoryTab(),
+                  _buildSavedServicesTab(),
+                ],
               ),
-            );
-          }
+            ),
+          ],
         ),
       ),
     );
@@ -562,64 +511,23 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
 
   Widget _buildTabBar() {
     return Container(
-      color: Colors.white, // Or AppColors.surface
+      color: Colors.white,
       child: TabBar(
         controller: _tabController,
         labelColor: AppColors.primary,
         unselectedLabelColor: AppColors.textMedium,
         indicatorColor: AppColors.primary,
         indicatorWeight: 3,
-        tabs: _userService.currentUserRole == UserRole.serviceAgent
-            ? const [ // Tabs for Service Agent
-                Tab(text: "My Services"),
-                Tab(text: "Requests"), // e.g. Service Requests from clients
-                Tab(text: "Performance"), // e.g. Ratings, Earnings
-              ]
-            : const [ // Tabs for Client
-                Tab(text: "My Orders"), // Renamed from "Active Jobs"
-                Tab(text: "Order History"),
-                Tab(text: "Saved Items"), // Renamed from "Saved Services"
-              ],
+        tabs: const [
+          Tab(text: "Active Jobs"),
+          Tab(text: "History"),
+          Tab(text: "Saved"),
+        ],
       ),
     );
   }
 
-  List<Widget> _buildTabBarViews() {
-    UserRole role = _userService.currentUserRole;
-    if (role == UserRole.serviceAgent) {
-      return [
-        _buildMyServicesTab(), // Placeholder for agent's services
-        _buildServiceRequestsTab(), // Placeholder for requests
-        _buildAgentPerformanceTab(), // Placeholder for performance
-      ];
-    } else { // Client
-      return [
-        _buildActiveOrdersTab(), // Was _buildActiveJobsTab
-        _buildJobHistoryTab(),
-        _buildSavedServicesTab(),
-      ];
-    }
-  }
-
-  // Client Tabs
-  Widget _buildActiveOrdersTab() { // Renamed from _buildActiveJobsTab
-    return _activeJobs.isEmpty // Assuming _activeJobs still holds client's active orders
-        ? _buildEmptyState(
-            "No Active Orders",
-            "You don't have any active orders at the moment.",
-            Icons.shopping_cart_outlined,
-          )
-        : ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: _activeJobs.length,
-            itemBuilder: (context, index) {
-              final job = _activeJobs[index];
-              return _buildActiveJobCard(job); // Can reuse card if structure is similar
-            },
-          );
-  }
-
-  Widget _buildJobHistoryTab() {
+  Widget _buildActiveJobsTab() {
     return _activeJobs.isEmpty
         ? _buildEmptyState(
             "No active jobs",
