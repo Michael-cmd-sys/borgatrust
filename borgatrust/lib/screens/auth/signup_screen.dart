@@ -462,10 +462,9 @@ class _SignupScreenState extends State<SignupScreen> {
           child: Container( // Use a Container with a Key for AnimatedSwitcher
             key: currentFormKey, // Ensures AnimatedSwitcher properly handles transitions
             child: currentFormView,
-          )
+          ),
         ),
-      ),
-    )
+    );
   }
 
   Widget _socialLoginButton({

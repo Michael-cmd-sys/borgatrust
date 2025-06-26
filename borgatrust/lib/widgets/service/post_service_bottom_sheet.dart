@@ -122,7 +122,7 @@ class _PostServiceBottomSheetState extends State<PostServiceBottomSheet> {
                 label: "Service Description",
                 hintText: "Describe your service clearly. What do you offer? What's included?",
                 controller: _serviceDescriptionController,
-                maxLines: 4,
+                // maxLines: 4,
                 validator: (value) => (value == null || value.isEmpty) ? 'Please describe your service' : null,
               ),
               const SizedBox(height: 24),

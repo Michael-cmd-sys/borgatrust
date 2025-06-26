@@ -338,7 +338,7 @@ class _HomeScreenState extends State<HomeScreen> {
               textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               elevation: 2, // Adding subtle elevation for depth on the button
             ),
-            isPrimary: true, // Important: Set to true to use ElevatedButton as base, style is overridden by buttonStyle
+            // isPrimary: true, // Important: Set to true to use ElevatedButton as base, style is overridden by buttonStyle
             isFullWidth: false,
           ),
         ],

@@ -234,7 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             Icon(
               icon,
               size: 80,
-              color: AppColors.textLight.withOpacity(0.5),
+              color: AppColors.textLight.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
@@ -366,7 +366,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             children: [
               CircleAvatar(
                 radius: 60,
-                backgroundColor: AppColors.primaryLight.withOpacity(0.5),
+                backgroundColor: AppColors.primaryLight.withValues(alpha: 0.5),
                 // backgroundImage: AssetImage(_userData["avatarUrl"]), // Use avatarUrl
                 // Use NetworkImage if URL is from network, otherwise AssetImage
                 // For mock data, ensure placeholder assets exist or handle errors.
@@ -421,7 +421,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             ),
           const SizedBox(height: 8),
           _isEditing
-              ? CustomTextField(label: "Bio", controller: _bioController, maxLines: 3)
+              ? CustomTextField(label: "Bio", controller: _bioController, 
+              // maxLines: 3
+              )
               : Text(
                   _userData["bio"] ?? "No bio available.",
                   textAlign: TextAlign.center,
@@ -483,8 +485,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
           label: label ?? "",
           controller: controller,
           keyboardType: keyboardType ?? TextInputType.text,
-          prefixIcon: Icon(icon, color: iconColor ?? AppColors.textLight, size: 18),
-          isDense: true, // Smaller text field
+          // prefixIcon: Icon(icon, color: iconColor ?? AppColors.textLight, size: 18),
+          // isDense: true, // Smaller text field
         ),
       );
     }
@@ -512,7 +514,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -794,22 +796,22 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildJobHistoryTab() { // This is for Client "Order History"
-    return _jobHistory.isEmpty
-        ? _buildEmptyState(
-            "No Order History",
-            "You haven't completed any orders yet.",
-            Icons.history_edu_outlined,
-          )
-        : ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: _jobHistory.length,
-            itemBuilder: (context, index) {
-              final job = _jobHistory[index];
-              return _buildJobHistoryCard(job); // Can reuse card if structure is similar
-            },
-          );
-  }
+  // Widget _buildJobHistoryTab() { // This is for Client "Order History"
+  //   return _jobHistory.isEmpty
+  //       ? _buildEmptyState(
+  //           "No Order History",
+  //           "You haven't completed any orders yet.",
+  //           Icons.history_edu_outlined,
+  //         )
+  //       : ListView.builder(
+  //           padding: const EdgeInsets.all(16),
+  //           itemCount: _jobHistory.length,
+  //           itemBuilder: (context, index) {
+  //             final job = _jobHistory[index];
+  //             return _buildJobHistoryCard(job); // Can reuse card if structure is similar
+  //           },
+  //         );
+  // }
 
   Widget _buildJobHistoryCard(Map<String, dynamic> job) { // This card is for client's past orders
     return Card(
@@ -1091,45 +1093,45 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildEmptyState(String title, String message, IconData icon) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 80,
-            color: AppColors.textLight.withOpacity(0.5),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textDark,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.textMedium,
-            ),
-          ),
-          const SizedBox(height: 24),
-          CustomButton(
-            text: "Browse Services",
-            onPressed: () {
-              // Navigate to services
-            },
-            isPrimary: true,
-            isFullWidth: false,
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildEmptyState(String title, String message, IconData icon) {
+  //   return Center(
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         Icon(
+  //           icon,
+  //           size: 80,
+  //           color: AppColors.textLight.withValues(alpha: 0.5),
+  //         ),
+  //         const SizedBox(height: 16),
+  //         Text(
+  //           title,
+  //           style: const TextStyle(
+  //             fontSize: 20,
+  //             fontWeight: FontWeight.bold,
+  //             color: AppColors.textDark,
+  //           ),
+  //         ),
+  //         const SizedBox(height: 8),
+  //         Text(
+  //           message,
+  //           textAlign: TextAlign.center,
+  //           style: TextStyle(
+  //             fontSize: 14,
+  //             color: AppColors.textMedium,
+  //           ),
+  //         ),
+  //         const SizedBox(height: 24),
+  //         CustomButton(
+  //           text: "Browse Services",
+  //           onPressed: () {
+  //             // Navigate to services
+  //           },
+  //           isPrimary: true,
+  //           isFullWidth: false,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
