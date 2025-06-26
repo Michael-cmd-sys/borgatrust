@@ -88,12 +88,45 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _loadUserData();
+    // Initialize TabController after knowing the number of tabs based on role
+    // This will be handled in _loadUserData or build method
   }
+
+  void _loadUserData() {
+    _userData = _userService.getMockUserData();
+    _nameController.text = _userData['name'] ?? '';
+    _bioController.text = _userData['bio'] ?? '';
+    _locationController.text = _userData['location'] ?? '';
+    _phoneController.text = _userData['phone'] ?? '';
+    if (_userService.currentUserRole == UserRole.serviceAgent) {
+      _businessNameController.text = _userData['businessName'] ?? '';
+    }
+
+    // Initialize TabController based on role
+    // _setupTabs(); // TabController no longer needed
+  }
+
+  // void _setupTabs() { // No longer needed
+  //   UserRole role = _userService.currentUserRole;
+  //   int tabCount = role == UserRole.serviceAgent ? 3 : 3;
+  //   _tabController?.dispose();
+  //   _tabController = TabController(length: tabCount, vsync: this);
+  //   _tabController.addListener(() {
+  //     if (_tabController.indexIsChanging) {
+  //     }
+  //   });
+  // }
+
 
   @override
   void dispose() {
-    _tabController.dispose();
+    // _tabController.dispose(); // No longer needed
+    _nameController.dispose();
+    _bioController.dispose();
+    _locationController.dispose();
+    _phoneController.dispose();
+    _businessNameController.dispose();
     super.dispose();
   }
 
@@ -284,24 +317,34 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             )
         ],
       ),
-      body: AfricanPatternContainer(
-        opacity: 0.02,
-        child: Column(
-          children: [
-            _buildProfileHeader(),
-            _buildProfileStats(),
-            _buildTabBar(),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildActiveJobsTab(),
-                  _buildJobHistoryTab(),
-                  _buildSavedServicesTab(),
-                ],
+      body: RefreshIndicator( // Added RefreshIndicator for potential future use
+        onRefresh: () async {
+          setState(() {
+            _loadUserData(); // Simulate fetching fresh data
+          });
+        },
+        child: LayoutBuilder( // Use LayoutBuilder for responsiveness
+          builder: (context, constraints) {
+            return SingleChildScrollView( // Ensure content is scrollable
+              child: ConstrainedBox( // Ensure SingleChildScrollView takes at least screen height
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight( // Ensure Column takes only necessary height
+                  child: AfricanPatternContainer(
+                    opacity: 0.02,
+                    child: Column(
+                      children: [
+                        _buildProfileHeader(context),
+                        _buildProfileStats(context),
+                        const SizedBox(height: 16), // Spacing before the list
+                        _buildProfileMenuList(context), // New list-based navigation
+                        // const SizedBox(height: 16), // Spacing after the list
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ],
+            );
+          }
         ),
       ),
     );
@@ -509,25 +552,112 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildTabBar() {
-    return Container(
-      color: Colors.white,
-      child: TabBar(
-        controller: _tabController,
-        labelColor: AppColors.primary,
-        unselectedLabelColor: AppColors.textMedium,
-        indicatorColor: AppColors.primary,
-        indicatorWeight: 3,
-        tabs: const [
-          Tab(text: "Active Jobs"),
-          Tab(text: "History"),
-          Tab(text: "Saved"),
-        ],
+ Widget _buildProfileMenuList(BuildContext context) {
+    UserRole role = _userService.currentUserRole;
+    List<Widget> menuItems = [];
+
+    if (role == UserRole.client) {
+      menuItems.addAll([
+        _buildMenuListItem(context, title: "My Active Orders", icon: Icons.shopping_cart_outlined, onTap: () {
+          // TODO: Navigate to Active Orders Screen (previously _buildActiveOrdersTab content)
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to My Active Orders")));
+        }),
+        _buildMenuListItem(context, title: "Order History", icon: Icons.history_edu_outlined, onTap: () {
+          // TODO: Navigate to Order History Screen
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to Order History")));
+        }),
+        _buildMenuListItem(context, title: "Saved Items", icon: Icons.bookmark_add_outlined, onTap: () {
+          // TODO: Navigate to Saved Items Screen
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to Saved Items")));
+        }),
+      ]);
+    } else if (role == UserRole.serviceAgent) {
+      menuItems.addAll([
+        _buildMenuListItem(context, title: "My Offered Services", icon: Icons.list_alt_outlined, onTap: () {
+           // TODO: Navigate to My Services Screen
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to My Services")));
+        }),
+        _buildMenuListItem(context, title: "Client Service Requests", icon: Icons.mark_email_read_outlined, onTap: () {
+           // TODO: Navigate to Service Requests Screen
+           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to Service Requests")));
+        }),
+        _buildMenuListItem(context, title: "My Performance", icon: Icons.insights_outlined, onTap: () {
+           // TODO: Navigate to Performance Screen
+           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to Performance")));
+        }),
+      ]);
+    }
+
+    // Common menu items
+    menuItems.addAll([
+      const Divider(height: 24, indent: 16, endIndent: 16),
+      _buildMenuListItem(context, title: "Account Settings", icon: Icons.settings_outlined, onTap: () {
+         // TODO: Navigate to Account Settings
+         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to Account Settings")));
+      }),
+      _buildMenuListItem(context, title: "Help & Support", icon: Icons.help_outline, onTap: () {
+         // TODO: Navigate to Help & Support
+         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Navigate to Help & Support")));
+      }),
+      _buildMenuListItem(context, title: "Logout", icon: Icons.logout, onTap: () {
+        // TODO: Implement Logout
+        UserService().logout(); // Simulate logout
+        Navigator.of(context).pushNamedAndRemoveUntil('/auth', (route) => false); // Navigate to auth screen
+      },
+      textColor: AppColors.error, // Optional: highlight logout
+      iconColor: AppColors.error,
+      ),
+    ]);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0), // Add some horizontal padding to the list itself
+      child: Column(children: menuItems),
+    );
+  }
+
+  Widget _buildMenuListItem(BuildContext context, {required String title, required IconData icon, VoidCallback? onTap, Color? textColor, Color? iconColor}) {
+    return Card( // Wrap ListTile in a Card for better visual separation and styling
+      elevation: 1.5, // Subtle elevation
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: Icon(icon, color: iconColor ?? AppColors.primary, size: 24),
+        title: Text(
+          title,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: textColor ?? AppColors.textDark,
+                fontWeight: FontWeight.w500 // Slightly less bold than section titles
+              ),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textLight),
+        onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Adjust padding
       ),
     );
   }
 
-  Widget _buildActiveJobsTab() {
+
+  // These methods will be removed or their content moved to new screen widgets.
+  // For now, they are kept to avoid breaking references until new screens are created.
+  // Client Tabs
+  Widget _buildActiveOrdersTab() { // Renamed from _buildActiveJobsTab
+    return _activeJobs.isEmpty // Assuming _activeJobs still holds client's active orders
+        ? _buildEmptyState(
+            "No Active Orders",
+            "You don't have any active orders at the moment.",
+            Icons.shopping_cart_outlined,
+          )
+        : ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: _activeJobs.length,
+            itemBuilder: (context, index) {
+              final job = _activeJobs[index];
+              return _buildActiveJobCard(job); // Can reuse card if structure is similar
+            },
+          );
+  }
+
+  Widget _buildJobHistoryTab() {
     return _activeJobs.isEmpty
         ? _buildEmptyState(
             "No active jobs",

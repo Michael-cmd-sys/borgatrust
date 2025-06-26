@@ -13,7 +13,7 @@ import './profile/profile_screen.dart';
 import '../../widgets/service/post_service_bottom_sheet.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();

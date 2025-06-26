@@ -10,14 +10,14 @@ class FeaturedServiceCard extends StatelessWidget {
   final int price;
 
   const FeaturedServiceCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.provider,
     required this.imageAsset,
     required this.rating,
     required this.reviews,
     required this.price,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

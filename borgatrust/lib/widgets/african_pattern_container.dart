@@ -7,11 +7,11 @@ class AfricanPatternContainer extends StatelessWidget {
   final double opacity;
 
   const AfricanPatternContainer({
-    Key? key,
+    super.key,
     required this.child,
     this.padding = const EdgeInsets.all(20),
     this.opacity = 0.03,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

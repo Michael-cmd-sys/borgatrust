@@ -9,13 +9,13 @@ class TopServiceProviderCard extends StatelessWidget {
   final int projectsCompleted;
 
   const TopServiceProviderCard({
-    Key? key,
+    super.key,
     required this.name,
     required this.specialty,
     required this.imageAsset,
     required this.rating,
     required this.projectsCompleted,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

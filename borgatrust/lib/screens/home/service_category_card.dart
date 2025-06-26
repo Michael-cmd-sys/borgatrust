@@ -9,11 +9,11 @@ class ServiceCategoryCard extends StatelessWidget {
   final int count;
 
   const ServiceCategoryCard({
-    Key? key,
+    super.key,
     required this.name,
     required this.icon,
     required this.count,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

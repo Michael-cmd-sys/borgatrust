@@ -5,7 +5,7 @@ import '../../widgets/african_pattern_container.dart';
 import '../../widgets/custom_button.dart';
 
 class ExploreScreen extends StatefulWidget {
-  const ExploreScreen({Key? key}) : super(key: key);
+  const ExploreScreen({super.key});
 
   @override
   State<ExploreScreen> createState() => _ExploreScreenState();
@@ -313,7 +313,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           const Icon(Icons.star, size: 18, color: Color(0xFFFFB800)),
                           const SizedBox(width: 4),
                           Text(
-                            "${(service["rating"] as double).toStringAsFixed(1)}", // Formatted rating
+                            (service["rating"] as double).toStringAsFixed(1), // Formatted rating
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),

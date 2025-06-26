@@ -6,7 +6,7 @@ import '../../widgets/african_pattern_container.dart';
 import '../../widgets/custom_button.dart';
 
 class PostJobScreen extends StatefulWidget {
-  const PostJobScreen({Key? key}) : super(key: key);
+  const PostJobScreen({super.key});
 
   @override
   State<PostJobScreen> createState() => _PostJobScreenState();

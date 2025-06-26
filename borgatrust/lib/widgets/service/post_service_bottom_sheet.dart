@@ -7,7 +7,7 @@ import '../custom_text_field.dart'; // Assuming CustomTextField is in widgets/
 class PostServiceBottomSheet extends StatefulWidget {
   final ScrollController? scrollController; // Optional for DraggableScrollableSheet
 
-  const PostServiceBottomSheet({Key? key, this.scrollController}) : super(key: key);
+  const PostServiceBottomSheet({super.key, this.scrollController});
 
   @override
   State<PostServiceBottomSheet> createState() => _PostServiceBottomSheetState();

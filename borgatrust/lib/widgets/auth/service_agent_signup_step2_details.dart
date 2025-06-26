@@ -13,7 +13,7 @@ class ServiceAgentSignupStep2Details extends StatefulWidget {
   final TextEditingController confirmPasswordController;
 
   const ServiceAgentSignupStep2Details({
-    Key? key,
+    super.key,
     required this.formKey,
     required this.businessNameController,
     required this.businessEmailController,
@@ -22,7 +22,7 @@ class ServiceAgentSignupStep2Details extends StatefulWidget {
     required this.agentEmailController,
     required this.passwordController,
     required this.confirmPasswordController,
-  }) : super(key: key);
+  });
 
   @override
   State<ServiceAgentSignupStep2Details> createState() => _ServiceAgentSignupStep2DetailsState();

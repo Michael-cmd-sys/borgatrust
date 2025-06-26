@@ -7,7 +7,7 @@ import '../../widgets/custom_text_field.dart';
 import '../../services/user_service.dart'; // Import the UserService
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();

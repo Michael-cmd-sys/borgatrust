@@ -39,7 +39,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   final bool showOnboarding;
 
-  const MyApp({Key? key, required this.showOnboarding}) : super(key: key);
+  const MyApp({super.key, required this.showOnboarding});
 
   @override
   Widget build(BuildContext context) {

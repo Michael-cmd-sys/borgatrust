@@ -10,7 +10,7 @@ import '../../widgets/auth/service_agent_signup_step2_details.dart';
 import 'package:file_picker/file_picker.dart'; // For PlatformFile type
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({Key? key}) : super(key: key);
+  const SignupScreen({super.key});
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();
@@ -22,8 +22,8 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
+  final bool _obscurePassword = true;
+  final bool _obscureConfirmPassword = true;
   bool _agreedToTerms = false;
 
   // 0: Role selection, 1: Client form,
@@ -457,7 +457,7 @@ class _SignupScreenState extends State<SignupScreen> {
       child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           transitionBuilder: (Widget child, Animation<double> animation) {
-            return FadeTransition(child: child, opacity: animation);
+            return FadeTransition(opacity: animation, child: child);
           },
           child: Container( // Use a Container with a Key for AnimatedSwitcher
             key: currentFormKey, // Ensures AnimatedSwitcher properly handles transitions
@@ -465,7 +465,7 @@ class _SignupScreenState extends State<SignupScreen> {
           )
         ),
       ),
-    );
+    )
   }
 
   Widget _socialLoginButton({

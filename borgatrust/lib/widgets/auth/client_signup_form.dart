@@ -20,7 +20,7 @@ class ClientSignupForm extends StatefulWidget {
   final bool agreedToTerms;
 
   const ClientSignupForm({
-    Key? key,
+    super.key,
     required this.formKey,
     required this.fullNameController,
     required this.emailController,
@@ -34,7 +34,7 @@ class ClientSignupForm extends StatefulWidget {
     required this.onShowPrivacy,
     required this.onAgreeToTermsChanged,
     required this.agreedToTerms,
-  }) : super(key: key);
+  });
 
   @override
   State<ClientSignupForm> createState() => _ClientSignupFormState();

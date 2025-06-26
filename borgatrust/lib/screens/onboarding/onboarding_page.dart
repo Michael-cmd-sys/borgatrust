@@ -18,9 +18,9 @@ class OnboardingPage extends StatelessWidget {
   final OnboardingPageData data;
   
   const OnboardingPage({
-    Key? key,
+    super.key,
     required this.data,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {

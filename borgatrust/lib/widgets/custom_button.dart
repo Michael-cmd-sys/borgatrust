@@ -13,7 +13,7 @@ class CustomButton extends StatelessWidget {
   final ButtonStyle? buttonStyle; // Allow providing a full custom ButtonStyle
 
   const CustomButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     this.isPrimary = true,
@@ -23,7 +23,7 @@ class CustomButton extends StatelessWidget {
     this.backgroundColor,
     this.foregroundColor,
     this.buttonStyle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -9,10 +9,10 @@ class ServiceAgentSignupStep1Doc extends StatefulWidget {
   final PlatformFile? pickedFile;
 
   const ServiceAgentSignupStep1Doc({
-    Key? key,
+    super.key,
     required this.onFilePicked,
     this.pickedFile,
-  }) : super(key: key);
+  });
 
   @override
   State<ServiceAgentSignupStep1Doc> createState() => _ServiceAgentSignupStep1DocState();
