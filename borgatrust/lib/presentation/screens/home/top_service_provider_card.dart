@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/custom_button.dart';
+import '../service/service_details_screen.dart';
 
 class TopServiceProviderCard extends StatelessWidget {
   final String name;
@@ -136,7 +137,21 @@ class TopServiceProviderCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () {
-                        // TODO: Navigate to provider profile
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ServiceDetailsScreen(
+                              service: {
+                                'title': specialty,
+                                'provider': name,
+                                'image': imageAsset,
+                                'rating': rating,
+                                'completedJobs': projectsCompleted,
+                                // Add more fields as needed
+                              },
+                            ),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryLight.withOpacity(0.25),

@@ -106,14 +106,17 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                 CircleAvatar(
                   radius: 20,
                   backgroundColor: AppColors.primaryLight,
-                  child: Text(
-                    (widget.service['provider'] ?? 'Provider')[0].toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
-                  ),
+                  backgroundImage: widget.service['image'] != null ? AssetImage(widget.service['image']) : null,
+                  child: widget.service['image'] == null
+                      ? Text(
+                          (widget.service['provider'] ?? 'P')[0].toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        )
+                      : null,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -135,6 +138,7 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
                           color: AppColors.textMedium,
                         ),
                       ),
+                      // TODO: Add more agent/service info here as needed
                     ],
                   ),
                 ),

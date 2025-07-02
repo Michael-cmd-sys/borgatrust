@@ -8,6 +8,7 @@ import '../../../shared/widgets/custom_button.dart';
 import 'featured_service_card.dart';
 import 'service_category_card.dart';
 import 'top_service_provider_card.dart';
+import '../../../data/repositories/user_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -121,6 +122,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDrawer() {
+    final userService = UserService();
+    final userData = userService.getUserData();
     return Drawer(
       child: AfricanPatternContainer(
         opacity: 0.02,
@@ -150,9 +153,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              "John Doe",
-                              style: TextStyle(
+                            Text(
+                              userData['name'] ?? 'N/A',
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -160,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              "johndoe@example.com",
+                              userData['email'] ?? '',
                               style: TextStyle(
                                 color: Colors.white.withOpacity(0.8),
                                 fontSize: 14,
