@@ -20,6 +20,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final controller = PageController();
   bool isLastPage = false;
 
+  // New state for onboarding answers
+  String? selectedRole;
+  String? userPreference;
+
+  // Add two new pages for role and preference selection
+  late final List<Widget> onboardingPages;
+
   final List<OnboardingPageData> pages = [
     OnboardingPageData(
       title: "Welcome to BorgaTrust",
@@ -45,12 +52,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    onboardingPages = [
+      _buildRoleSelectionPage(),
+      _buildPreferencePage(),
+      ...pages.map((page) => OnboardingPage(data: page)).toList(),
+    ];
+  }
+
+  @override
   void dispose() {
     controller.dispose();
     super.dispose();
   }
 
   void completeOnboarding() async {
+    // Dummy analytics: print answers
+    print('Onboarding complete. Role: '
+        '[33m[1m[4m${selectedRole ?? "Not selected"}[0m, '
+        'Preference: [33m[1m[4m${userPreference ?? "Not provided"}[0m');
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('onboarding_completed', true);
     
@@ -65,6 +86,93 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
       );
     }
+  }
+
+  Widget _buildRoleSelectionPage() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(height: 40),
+          Text(
+            'Who are you?',
+            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppColors.textDark,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Select your role to personalize your experience.',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: AppColors.textMedium,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+          RadioListTile<String>(
+            value: 'Client',
+            groupValue: selectedRole,
+            onChanged: (val) => setState(() => selectedRole = val),
+            title: const Text('Client'),
+            activeColor: AppColors.primary,
+          ),
+          RadioListTile<String>(
+            value: 'Service Provider',
+            groupValue: selectedRole,
+            onChanged: (val) => setState(() => selectedRole = val),
+            title: const Text('Service Provider'),
+            activeColor: AppColors.primary,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPreferencePage() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(height: 40),
+          Text(
+            'What are you looking for?',
+            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppColors.textDark,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Let us know your main interest so we can tailor recommendations.',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: AppColors.textMedium,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+          DropdownButtonFormField<String>(
+            value: userPreference,
+            items: const [
+              DropdownMenuItem(value: 'Web Development', child: Text('Web Development')),
+              DropdownMenuItem(value: 'Graphic Design', child: Text('Graphic Design')),
+              DropdownMenuItem(value: 'Content Writing', child: Text('Content Writing')),
+              DropdownMenuItem(value: 'Legal Services', child: Text('Legal Services')),
+              DropdownMenuItem(value: 'Events', child: Text('Events')),
+              DropdownMenuItem(value: 'Translation', child: Text('Translation')),
+              DropdownMenuItem(value: 'Other', child: Text('Other')),
+            ],
+            onChanged: (val) => setState(() => userPreference = val),
+            decoration: const InputDecoration(
+              labelText: 'Select your interest',
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -99,12 +207,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: controller,
                 onPageChanged: (index) {
                   setState(() {
-                    isLastPage = index == pages.length - 1;
+                    isLastPage = index == onboardingPages.length - 1;
                   });
                 },
-                itemCount: pages.length,
+                itemCount: onboardingPages.length,
                 itemBuilder: (context, index) {
-                  return OnboardingPage(data: pages[index]);
+                  return onboardingPages[index];
                 },
               ),
             ),
@@ -118,7 +226,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   // Page indicators
                   SmoothPageIndicator(
                     controller: controller,
-                    count: pages.length,
+                    count: onboardingPages.length,
                     effect: const WormEffect(
                       dotHeight: 8,
                       dotWidth: 8,
