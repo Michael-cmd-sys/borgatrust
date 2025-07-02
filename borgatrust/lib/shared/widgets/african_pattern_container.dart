@@ -82,6 +82,30 @@ class ElegantPatternPainter extends CustomPainter {
         
         // Draw inner circle
         canvas.drawCircle(center, patternSize / 4, paint);
+
+        // Draw zig-zag motif (horizontal)
+        final zigzagPath = Path();
+        double zigzagWidth = patternSize;
+        double zigzagHeight = patternSize / 4;
+        int zigzagCount = 4;
+        for (int i = 0; i < zigzagCount; i++) {
+          double startX = center.dx - zigzagWidth / 2 + (i * (zigzagWidth / zigzagCount));
+          double startY = center.dy + patternSize / 2 + 6;
+          double endX = startX + (zigzagWidth / (2 * zigzagCount));
+          double endY = (i % 2 == 0) ? startY + zigzagHeight : startY - zigzagHeight;
+          zigzagPath.moveTo(startX, startY);
+          zigzagPath.lineTo(endX, endY);
+        }
+        canvas.drawPath(zigzagPath, paint);
+
+        // Draw triangle motif (above diamond)
+        final trianglePath = Path();
+        trianglePath.moveTo(center.dx, center.dy - patternSize / 2 - 10);
+        trianglePath.lineTo(center.dx - 10, center.dy - patternSize / 2 - 25);
+        trianglePath.lineTo(center.dx + 10, center.dy - patternSize / 2 - 25);
+        trianglePath.close();
+        canvas.drawPath(trianglePath, fillPaint);
+        canvas.drawPath(trianglePath, paint);
       }
     }
   }

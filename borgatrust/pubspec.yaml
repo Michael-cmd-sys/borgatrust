@@ -38,7 +38,7 @@ dependencies:
   hive_flutter: ^1.1.0
   
   # Background Processing
-  workmanager: ^0.5.2
+  workmanager: ^0.8.0
   
   # Code Generation
   build_runner: ^2.4.9
@@ -50,6 +50,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0 # For code linting
+  flutter_native_splash: ^2.4.0
 
 flutter:
   uses-material-design: true
@@ -72,3 +73,12 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/icons/borgatrust_logo.png"
   adaptive_icon_background: "#FFFFFF" # For Android adaptive icons   hyh
+
+flutter_native_splash:
+  color: "#B38B30" # Royal Gold background
+  image: assets/images/bt_logo_nobg.png
+  android: true
+  ios: true
+  web: false
+  android_gravity: center
+  ios_content_mode: center

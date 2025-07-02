@@ -47,7 +47,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           ],
                         ),
                         child: Image.asset(
-                          'assets/images/borgatrust_logo.png',
+                          'assets/images/bt_logo_nobg.png',
                           height: 60,
                           width: 60,
                         ),
