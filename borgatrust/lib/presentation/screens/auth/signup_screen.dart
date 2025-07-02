@@ -6,6 +6,7 @@ import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/custom_button.dart';
 import '../../../shared/widgets/custom_text_field.dart';
 import '../../../data/repositories/user_service.dart';
+import '../../../shared/widgets/african_pattern_container.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -840,6 +841,29 @@ class _SignupScreenState extends State<SignupScreen> {
         
         const SizedBox(height: 24),
         
+        // Dummy ML Kit verification button
+        CustomButton(
+          text: "Verify with ML Kit (Demo)",
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('ML Kit Verification'),
+                content: const Text('ML Kit document verification coming soon!'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          },
+          isPrimary: false,
+        ),
+        
+        const SizedBox(height: 24),
+        
         // Security notice
         Container(
           padding: const EdgeInsets.all(16),
@@ -1120,49 +1144,70 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Step indicator
-          _buildStepIndicator(),
-          
-          const SizedBox(height: 32),
-          
-          // Current step content
-          _buildCurrentStep(),
-          
-          const SizedBox(height: 40),
-          
-          // Navigation buttons
-          Row(
-            children: [
-              if (_currentStep > 0)
+    return AfricanPatternContainer(
+      opacity: 0.03,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Step indicator
+            _buildStepIndicator(),
+            
+            const SizedBox(height: 32),
+            
+            // Current step content
+            _buildCurrentStep(),
+            
+            const SizedBox(height: 40),
+            
+            // Navigation buttons
+            Row(
+              children: [
+                if (_currentStep > 0)
+                  Expanded(
+                    child: CustomButton(
+                      text: "Back",
+                      onPressed: _previousStep,
+                      isPrimary: false,
+                    ),
+                  ),
+                
+                if (_currentStep > 0) const SizedBox(width: 16),
+                
                 Expanded(
                   child: CustomButton(
-                    text: "Back",
-                    onPressed: _previousStep,
-                    isPrimary: false,
+                    text: _currentStep == (_selectedRole == 'service_agent' ? 4 : 2) 
+                        ? "Create Account" 
+                        : "Next",
+                    onPressed: _currentStep == (_selectedRole == 'service_agent' ? 4 : 2)
+                        ? () async {
+                            await _completeSignup();
+                            // Dummy email verification dialog
+                            if (mounted) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Verify Your Email'),
+                                  content: const Text('A verification link has been sent to your email. Please check your inbox to verify your account. (Demo only)'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(),
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          }
+                        : _nextStep,
+                    isLoading: _isLoading,
                   ),
                 ),
-              
-              if (_currentStep > 0) const SizedBox(width: 16),
-              
-              Expanded(
-                child: CustomButton(
-                  text: _currentStep == (_selectedRole == 'service_agent' ? 4 : 2) 
-                      ? "Create Account" 
-                      : "Next",
-                  onPressed: _currentStep == (_selectedRole == 'service_agent' ? 4 : 2)
-                      ? _completeSignup
-                      : _nextStep,
-                  isLoading: _isLoading,
-                ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
