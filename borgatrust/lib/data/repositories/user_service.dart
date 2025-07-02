@@ -108,17 +108,17 @@ class UserService {
     } else {
       _currentUserRole = UserRole.client;
     }
-    
+    // Use the email prefix as a fallback for the user's name
+    String fallbackName = email.split('@').first;
     // Create user data from login
     final userData = createUserData(
-      fullName: email.contains("agent") ? "Service Agent Pro" : "Client User",
+      fullName: fallbackName,
       email: email,
       role: _currentUserRole,
       phone: email.contains("agent") ? "+233 55 333 4444" : "+233 20 111 2222",
       location: email.contains("agent") ? "Kumasi, Ghana" : "Accra, Ghana",
       businessName: email.contains("agent") ? "Pro Services Ltd." : null,
     );
-    
     setUserData(userData);
     _saveAuthState();
   }

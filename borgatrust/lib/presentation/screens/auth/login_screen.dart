@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await Future.delayed(const Duration(seconds: 1));
         // Dummy logic: only allow password 'password123'
         if (_passwordController.text != 'password123') {
-          throw Exception('Invalid credentials. Use password123 as password.');
+          throw Exception('Invalid email or password.');
         }
         final userService = UserService();
         userService.login(_emailController.text, _passwordController.text);
@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Login failed: [31m${e.toString()}[0m'),
+              content: Text('Login failed: Invalid email or password.'),
               backgroundColor: AppColors.error,
             ),
           );
