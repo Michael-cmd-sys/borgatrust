@@ -8,6 +8,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../shared/widgets/custom_button.dart';
 import '../auth/auth_screen.dart';
 import 'onboarding_page.dart';
+import 'dart:ui';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -178,112 +179,163 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Skip button
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: TextButton(
-                  onPressed: completeOnboarding,
-                  child: const Text(
-                    "Skip",
-                    style: TextStyle(
-                      color: AppColors.textMedium,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+      backgroundColor: AppColors.secondary,
+      body: Stack(
+        children: [
+          // Elegant blurred golden gradient background
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF5C3A23), // Rich Brown
+                    Color(0xFFB38B30), // Royal Gold
+                  ],
+                ),
+              ),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                child: Container(
+                  color: Colors.black.withOpacity(0.15),
                 ),
               ),
             ),
-            
-            // Page content
-            Expanded(
-              child: PageView.builder(
-                controller: controller,
-                onPageChanged: (index) {
-                  setState(() {
-                    isLastPage = index == onboardingPages.length - 1;
-                  });
-                },
-                itemCount: onboardingPages.length,
-                itemBuilder: (context, index) {
-                  return onboardingPages[index];
-                },
-              ),
-            ),
-            
-            // Bottom section with indicators and buttons
-            Container(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Page indicators
-                  SmoothPageIndicator(
-                    controller: controller,
-                    count: onboardingPages.length,
-                    effect: const WormEffect(
-                      dotHeight: 8,
-                      dotWidth: 8,
-                      activeDotColor: AppColors.primary,
-                      dotColor: AppColors.primaryLight,
-                      spacing: 8,
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                // Skip button
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: TextButton(
+                      onPressed: completeOnboarding,
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppColors.primaryAccent,
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        backgroundColor: Colors.white.withOpacity(0.08),
+                      ),
+                      child: const Text("Skip"),
                     ),
                   ),
-                  
-                  const SizedBox(height: 40),
-                  
-                  // Navigation buttons
-                  Row(
-                    children: [
-                      // Back button (only show if not on first page)
-                      if (!isLastPage)
-                        Expanded(
-                          child: CustomButton(
-                            text: "Previous",
-                            onPressed: () {
-                              controller.previousPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.easeInOut,
-                              );
-                            },
-                            isPrimary: false,
-                          ),
+                ),
+                // Page content
+                Expanded(
+                  child: PageView.builder(
+                    controller: controller,
+                    onPageChanged: (index) {
+                      setState(() {
+                        isLastPage = index == onboardingPages.length - 1;
+                      });
+                    },
+                    itemCount: onboardingPages.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.07),
+                          borderRadius: BorderRadius.circular(32),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 24,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
                         ),
-                      
-                      if (!isLastPage) const SizedBox(width: 16),
-                      
-                      // Next/Get Started button
-                      Expanded(
-                        flex: isLastPage ? 1 : 1,
-                        child: CustomButton(
-                          text: isLastPage ? "Get Started" : "Next",
-                          onPressed: () {
-                            if (isLastPage) {
-                              completeOnboarding();
-                            } else {
-                              controller.nextPage(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.easeInOut,
-                              );
-                            }
-                          },
+                        child: onboardingPages[index],
+                      );
+                    },
+                  ),
+                ),
+                // Bottom section with indicators and buttons
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Page indicators
+                      SmoothPageIndicator(
+                        controller: controller,
+                        count: onboardingPages.length,
+                        effect: WormEffect(
+                          dotHeight: 10,
+                          dotWidth: 10,
+                          activeDotColor: AppColors.primaryAccent,
+                          dotColor: AppColors.primaryLight.withOpacity(0.5),
+                          spacing: 10,
                         ),
                       ),
+                      const SizedBox(height: 40),
+                      // Navigation buttons
+                      Row(
+                        children: [
+                          // Back button (only show if not on first page)
+                          if (!isLastPage)
+                            Expanded(
+                              child: CustomButton(
+                                text: "Previous",
+                                onPressed: () {
+                                  controller.previousPage(
+                                    duration: const Duration(milliseconds: 500),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
+                                isPrimary: false,
+                                backgroundColor: Colors.white.withOpacity(0.10),
+                                foregroundColor: AppColors.primaryAccent,
+                                buttonStyle: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          if (!isLastPage) const SizedBox(width: 16),
+                          // Next/Get Started button
+                          Expanded(
+                            flex: isLastPage ? 1 : 1,
+                            child: CustomButton(
+                              text: isLastPage ? "Get Started" : "Next",
+                              onPressed: () {
+                                if (isLastPage) {
+                                  completeOnboarding();
+                                } else {
+                                  controller.nextPage(
+                                    duration: const Duration(milliseconds: 500),
+                                    curve: Curves.easeInOut,
+                                  );
+                                }
+                              },
+                              backgroundColor: AppColors.primaryAccent.withOpacity(0.95),
+                              foregroundColor: Colors.white,
+                              buttonStyle: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                                elevation: 0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
                     ],
                   ),
-                  
-                  const SizedBox(height: 20),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
