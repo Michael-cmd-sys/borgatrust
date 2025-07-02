@@ -37,7 +37,10 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         // Simulate authentication
         await Future.delayed(const Duration(seconds: 1));
-        
+        // Dummy logic: only allow password 'password123'
+        if (_passwordController.text != 'password123') {
+          throw Exception('Invalid credentials. Use password123 as password.');
+        }
         final userService = UserService();
         userService.login(_emailController.text, _passwordController.text);
 
@@ -51,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Login failed: ${e.toString()}'),
+              content: Text('Login failed: [31m${e.toString()}[0m'),
               backgroundColor: AppColors.error,
             ),
           );
@@ -72,32 +75,20 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      // TODO: Implement Google Sign In
-      await Future.delayed(const Duration(seconds: 2));
-      
-      // For demo purposes, create a mock user
-      final userService = UserService();
-      final userData = userService.createUserData(
-        fullName: "Google User",
-        email: "googleuser@gmail.com",
-        role: UserRole.client,
-        phone: "+233 20 123 4567",
-        location: "Accra, Ghana",
-      );
-      userService.setUserData(userData);
-      
+      // TODO: Implement Google Sign In (Firebase)
+      await Future.delayed(const Duration(seconds: 1));
       if (mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/main',
-          (Route<dynamic> route) => false,
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Google sign in failed: ${e.toString()}'),
-            backgroundColor: AppColors.error,
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Coming Soon'),
+            content: const Text('Google sign-in will be available in a future update.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
           ),
         );
       }
@@ -108,6 +99,22 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       }
     }
+  }
+
+  void _showForgotPasswordDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Forgot Password?'),
+        content: const Text('A password reset link would be sent to your email (demo only).'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -194,15 +201,10 @@ class _LoginScreenState extends State<LoginScreen> {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () {
-                  // TODO: Implement forgot password
-                },
+                onPressed: _showForgotPasswordDialog,
                 child: const Text(
-                  "Forgot Password?",
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  'Forgot Password?',
+                  style: TextStyle(color: AppColors.primary),
                 ),
               ),
             ),
@@ -240,11 +242,12 @@ class _LoginScreenState extends State<LoginScreen> {
             
             // Google Sign In Button
             CustomButton(
-              text: "Continue with Google",
+              text: 'Sign in with Google',
               onPressed: _handleGoogleSignIn,
-              isGoogleButton: true,
+              isPrimary: false,
+              isFullWidth: true,
               isLoading: _isGoogleLoading,
-              googleLogoPath: "assets/images/google_logo.png",
+              leadingIcon: const Icon(Icons.g_mobiledata, color: Colors.red),
             ),
             
             const SizedBox(height: 24),
